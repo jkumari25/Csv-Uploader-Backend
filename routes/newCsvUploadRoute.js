@@ -2,7 +2,6 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const bodyParser = require("body-parser");
-const { isAuthenticatedUser, authorizeRoles } = require("../middleware/Auth");
 const {
   getNewCsv,
   importNewCsvFile,
@@ -27,10 +26,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Routes
-router.route("/getNewFile").get(isAuthenticatedUser, getNewCsv);
-router
-  .route("/importNewCsvFile")
-  .post(upload.single("file"), importNewCsvFile, isAuthenticatedUser);
+router.route("/getNewFile").get(getNewCsv);
+router.route("/importNewCsvFile").post(upload.single("file"), importNewCsvFile);
 router.route("/getCsv").get(getFilteredCsv);
 
 module.exports = router;
