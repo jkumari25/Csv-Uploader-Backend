@@ -50,6 +50,58 @@ exports.getNewCsv = CatchAsyncError(async (req, res, next) => {
 });
 
 // Get CSV Details with Filters:-
+// exports.getFilteredCsv = CatchAsyncError(async (req, res, next) => {
+//   // Extract filter parameters from request query
+//   const {
+//     firstName,
+//     lastName,
+//     companyName,
+//     source,
+//     emailId,
+//     designation,
+//     industryType,
+//     phoneNo,
+//     country,
+//     city,
+//     linkedInProfile,
+//     toolsUsed,
+//   } = req.query;
+
+//   // Construct MongoDB query based on filter parameters
+//   const filter = {};
+//   const orConditions = [];
+
+//   if (firstName) orConditions.push({ firstName: new RegExp(firstName, "i") });
+//   if (lastName) orConditions.push({ lastName: new RegExp(lastName, "i") });
+//   if (companyName)
+//     orConditions.push({ companyName: new RegExp(companyName, "i") });
+//   if (source) orConditions.push({ source: new RegExp(source, "i") });
+//   if (emailId) orConditions.push({ emailId: new RegExp(emailId, "i") });
+//   if (designation)
+//     orConditions.push({ designation: new RegExp(designation, "i") });
+//   if (industryType)
+//     orConditions.push({ industryType: new RegExp(industryType, "i") });
+//   if (phoneNo) orConditions.push({ phoneNo: new RegExp(phoneNo, "i") });
+//   if (country) orConditions.push({ country: new RegExp(country, "i") });
+//   if (city) orConditions.push({ city: new RegExp(city, "i") });
+//   if (linkedInProfile)
+//     orConditions.push({ linkedInProfile: new RegExp(linkedInProfile, "i") });
+//   if (toolsUsed) orConditions.push({ toolsUsed: new RegExp(toolsUsed, "i") });
+
+//   if (orConditions.length > 0) {
+//     filter["$or"] = orConditions;
+//   }
+
+//   // Fetch CSV data with applied filters
+//   const csv = await CsvUpload.find(filter);
+
+//   res.status(200).json({
+//     success: true,
+//     csv,
+//   });
+// });
+
+// Get CSV Details with Filters:-
 exports.getFilteredCsv = CatchAsyncError(async (req, res, next) => {
   // Extract filter parameters from request query
   const {
@@ -69,27 +121,31 @@ exports.getFilteredCsv = CatchAsyncError(async (req, res, next) => {
 
   // Construct MongoDB query based on filter parameters
   const filter = {};
-  const orConditions = [];
+  const andConditions = []; // Changed to andConditions
 
-  if (firstName) orConditions.push({ firstName: new RegExp(firstName, "i") });
-  if (lastName) orConditions.push({ lastName: new RegExp(lastName, "i") });
-  if (companyName)
-    orConditions.push({ companyName: new RegExp(companyName, "i") });
-  if (source) orConditions.push({ source: new RegExp(source, "i") });
-  if (emailId) orConditions.push({ emailId: new RegExp(emailId, "i") });
+  if (firstName) andConditions.push({ firstName: new RegExp(firstName, "i") });
+  if (lastName) andConditions.push({ lastName: new RegExp(lastName, "i") });
+  if (source) andConditions.push({ source: new RegExp(source, "i") });
+  if (emailId) andConditions.push({ emailId: new RegExp(emailId, "i") });
   if (designation)
-    orConditions.push({ designation: new RegExp(designation, "i") });
+    andConditions.push({ designation: new RegExp(designation, "i") });
   if (industryType)
-    orConditions.push({ industryType: new RegExp(industryType, "i") });
-  if (phoneNo) orConditions.push({ phoneNo: new RegExp(phoneNo, "i") });
-  if (country) orConditions.push({ country: new RegExp(country, "i") });
-  if (city) orConditions.push({ city: new RegExp(city, "i") });
+    andConditions.push({ industryType: new RegExp(industryType, "i") });
+  if (phoneNo) andConditions.push({ phoneNo: new RegExp(phoneNo, "i") });
+  if (country) andConditions.push({ country: new RegExp(country, "i") });
+  if (city) andConditions.push({ city: new RegExp(city, "i") });
   if (linkedInProfile)
-    orConditions.push({ linkedInProfile: new RegExp(linkedInProfile, "i") });
-  if (toolsUsed) orConditions.push({ toolsUsed: new RegExp(toolsUsed, "i") });
+    andConditions.push({ linkedInProfile: new RegExp(linkedInProfile, "i") });
+  if (toolsUsed) andConditions.push({ toolsUsed: new RegExp(toolsUsed, "i") });
 
-  if (orConditions.length > 0) {
-    filter["$or"] = orConditions;
+  // Add separate condition for company name
+  if (companyName) {
+    andConditions.push({ companyName: new RegExp(companyName, "i") });
+  }
+
+  // If there are conditions, set the $and operator
+  if (andConditions.length > 0) {
+    filter["$and"] = andConditions;
   }
 
   // Fetch CSV data with applied filters
