@@ -151,8 +151,30 @@ exports.getFilteredCsv = CatchAsyncError(async (req, res, next) => {
   // Fetch CSV data with applied filters
   const csv = await CsvUpload.find(filter);
 
+  // Aggregate to count occurrences of each country
+  const countryCounts = await CsvUpload.aggregate([
+    { $match: filter }, // Apply the same filter
+    { $group: { _id: "$country", count: { $sum: 1 } } }, // Group by country and count
+  ]);
+
+  // Aggregate to count occurrences of industryType and designation
+  const industryTypeCounts = await CsvUpload.aggregate([
+    { $match: filter }, // Apply the same filter
+    { $group: { _id: "$industryType", count: { $sum: 1 } } }, // Group by industryType and count
+  ]);
+
+  const designationCounts = await CsvUpload.aggregate([
+    { $match: filter }, // Apply the same filter
+    { $group: { _id: "$designation", count: { $sum: 1 } } }, // Group by designation and count
+  ]);
+
   res.status(200).json({
     success: true,
     csv,
+    counts: {
+      countryCounts,
+      industryTypeCounts,
+      designationCounts,
+    },
   });
 });
