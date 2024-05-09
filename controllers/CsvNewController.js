@@ -2,42 +2,6 @@ const CatchAsyncError = require("../middleware/CatchAsyncError");
 const CsvUpload = require("../models/CsvNewModel");
 const csv = require("csvtojson");
 
-// exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
-//   try {
-//     var fileData = [];
-
-//     csv()
-//       .fromFile(req.file.path)
-//       .then(async (data) => {
-//         // Changed variable name from 'res' to 'data'
-//         // insert many csv file :-
-//         for (var i = 0; i < data.length; i++) {
-//           fileData.push({
-//             source: data[i]["Source"],
-//             firstName: data[i]["First Name"], // Access properties using bracket notation
-//             lastName: data[i]["Last Name"],
-//             emailId: data[i]["Email Id"],
-//             designation: data[i]["Designation"],
-//             companyName: data[i]["Company Name"],
-//             industryType: data[i]["Industry Type"],
-//             phoneNo: data[i]["Phone No"],
-//             country: data[i]["Country"],
-//             city: data[i]["City"],
-//             linkedInProfile: data[i]["LinkedIn Profile"],
-//             toolsUsed: data[i]["Tools Used"],
-//           });
-//         }
-//         await CsvUpload.insertMany(fileData);
-//       });
-//     res.send({ status: 200, success: true, msg: "Csv Imported" });
-//   } catch (error) {
-//     res.send({
-//       status: 400,
-//       success: false,
-//       msg: error.message,
-//     });
-//   }
-// });
 exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
   try {
     var fileData = [];
@@ -48,36 +12,20 @@ exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
         // Changed variable name from 'res' to 'data'
         // insert many csv file :-
         for (var i = 0; i < data.length; i++) {
-          // Check if any of the required fields are empty
-          if (
-            data[i]["Source"] &&
-            data[i]["First Name"] &&
-            data[i]["Last Name"] &&
-            data[i]["Email Id"] &&
-            data[i]["Designation"] &&
-            data[i]["Company Name"] &&
-            data[i]["Industry Type"] &&
-            data[i]["Phone No"] &&
-            data[i]["Country"] &&
-            data[i]["City"] &&
-            data[i]["LinkedIn Profile"] &&
-            data[i]["Tools Used"]
-          ) {
-            fileData.push({
-              source: data[i]["Source"],
-              firstName: data[i]["First Name"], // Access properties using bracket notation
-              lastName: data[i]["Last Name"],
-              emailId: data[i]["Email Id"],
-              designation: data[i]["Designation"],
-              companyName: data[i]["Company Name"],
-              industryType: data[i]["Industry Type"],
-              phoneNo: data[i]["Phone No"],
-              country: data[i]["Country"],
-              city: data[i]["City"],
-              linkedInProfile: data[i]["LinkedIn Profile"],
-              toolsUsed: data[i]["Tools Used"],
-            });
-          }
+          fileData.push({
+            source: data[i]["Source"],
+            firstName: data[i]["First Name"], // Access properties using bracket notation
+            lastName: data[i]["Last Name"],
+            emailId: data[i]["Email Id"],
+            designation: data[i]["Designation"],
+            companyName: data[i]["Company Name"],
+            industryType: data[i]["Industry Type"],
+            phoneNo: data[i]["Phone No"],
+            country: data[i]["Country"],
+            city: data[i]["City"],
+            linkedInProfile: data[i]["LinkedIn Profile"],
+            toolsUsed: data[i]["Tools Used"],
+          });
         }
         await CsvUpload.insertMany(fileData);
       });
@@ -90,6 +38,58 @@ exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
     });
   }
 });
+// exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
+//   try {
+//     var fileData = [];
+
+//     csv()
+//       .fromFile(req.file.path)
+//       .then(async (data) => {
+//         // Changed variable name from 'res' to 'data'
+//         // insert many csv file :-
+//         for (var i = 0; i < data.length; i++) {
+//           // Check if any of the required fields are empty
+//           if (
+//             data[i]["Source"] &&
+//             data[i]["First Name"] &&
+//             data[i]["Last Name"] &&
+//             data[i]["Email Id"] &&
+//             data[i]["Designation"] &&
+//             data[i]["Company Name"] &&
+//             data[i]["Industry Type"] &&
+//             data[i]["Phone No"] &&
+//             data[i]["Country"] &&
+//             data[i]["City"] &&
+//             data[i]["LinkedIn Profile"] &&
+//             data[i]["Tools Used"]
+//           ) {
+//             fileData.push({
+//               source: data[i]["Source"],
+//               firstName: data[i]["First Name"], // Access properties using bracket notation
+//               lastName: data[i]["Last Name"],
+//               emailId: data[i]["Email Id"],
+//               designation: data[i]["Designation"],
+//               companyName: data[i]["Company Name"],
+//               industryType: data[i]["Industry Type"],
+//               phoneNo: data[i]["Phone No"],
+//               country: data[i]["Country"],
+//               city: data[i]["City"],
+//               linkedInProfile: data[i]["LinkedIn Profile"],
+//               toolsUsed: data[i]["Tools Used"],
+//             });
+//           }
+//         }
+//         await CsvUpload.insertMany(fileData);
+//       });
+//     res.send({ status: 200, success: true, msg: "Csv Imported" });
+//   } catch (error) {
+//     res.send({
+//       status: 400,
+//       success: false,
+//       msg: error.message,
+//     });
+//   }
+// });
 
 // Get CSV Details:-
 exports.getNewCsv = CatchAsyncError(async (req, res, next) => {
