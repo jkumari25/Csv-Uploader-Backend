@@ -2,33 +2,168 @@ const CatchAsyncError = require("../middleware/CatchAsyncError");
 const CsvUpload = require("../models/CsvNewModel");
 const csv = require("csvtojson");
 
+// exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
+//   try {
+//     var fileData = [];
+
+//     csv()
+//       .fromFile(req.file.path)
+//       .then(async (data) => {
+//         // Changed variable name from 'res' to 'data'
+//         // insert many csv file :-
+//         for (var i = 0; i < data.length; i++) {
+//           fileData.push({
+//             source: data[i]["Source"],
+//             firstName: data[i]["First Name"], // Access properties using bracket notation
+//             lastName: data[i]["Last Name"],
+//             emailId: data[i]["Email Id"],
+//             designation: data[i]["Designation"],
+//             companyName: data[i]["Company Name"],
+//             industryType: data[i]["Industry Type"],
+//             phoneNo: data[i]["Phone No"],
+//             country: data[i]["Country"],
+//             city: data[i]["City"],
+//             linkedInProfile: data[i]["LinkedIn Profile"],
+//             toolsUsed: data[i]["Tools Used"],
+//           });
+//         }
+//         await CsvUpload.insertMany(fileData);
+//       });
+//     res.send({ status: 200, success: true, msg: "Csv Imported" });
+//   } catch (error) {
+//     res.send({
+//       status: 400,
+//       success: false,
+//       msg: error.message,
+//     });
+//   }
+// });
+
+// exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
+//   try {
+//     var fileData = [];
+
+//     await csv()
+//       .fromFile(req.file.path)
+//       .then(async (data) => {
+//         // insert many csv file data
+//         for (var i = 0; i < data.length; i++) {
+//           fileData.push({
+//             srNo: data[i]["Sr No"] || "N/A",
+//             source: data[i]["Source"] || data[i]["Original Source"] || "N/A",
+//             firstName: data[i]["First Name"] || "N/A",
+//             lastName: data[i]["Last Name"] || "N/A",
+//             emailId: data[i]["Email ID"] || data[i]["Email"] || "N/A",
+//             phoneNumber: data[i]["Phone Number"] || "N/A",
+//             mobilePhoneNumber: data[i]["Mobile Phone Number"] || "N/A",
+//             designation:
+//               data[i]["Designation"] || data[i]["Job Title"] || "N/A",
+//             companyName:
+//               data[i]["Company Name"] || data[i]["Organization"] || "N/A",
+//             country: data[i]["Country"] || data[i]["Country/Region"] || "N/A",
+//             region: data[i]["Region"] || "N/A",
+//             city: data[i]["City"] || "N/A",
+//             organizationSize:
+//               data[i]["Organization Size"] ||
+//               data[i]["Number of Employees"] ||
+//               data[i]["Employee Size"] ||
+//               "N/A",
+//             status: data[i]["Status (Won/Lost)"] || "N/A",
+//             industry: data[i]["Industry"] || "N/A",
+//             data: data[i]["Data"] || "N/A",
+//           });
+//         }
+//         await CsvUpload.insertMany(fileData);
+//       });
+
+//     res.send({ status: 200, success: true, msg: "Csv Imported" });
+//   } catch (error) {
+//     res.send({
+//       status: 400,
+//       success: false,
+//       msg: error.message,
+//     });
+//   }
+// });
 exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
   try {
     var fileData = [];
 
-    csv()
+    await csv()
       .fromFile(req.file.path)
       .then(async (data) => {
-        // Changed variable name from 'res' to 'data'
-        // insert many csv file :-
+        // Insert many csv file data
         for (var i = 0; i < data.length; i++) {
+          const srNo = !isNaN(Number(data[i]["Sr No"]))
+            ? Number(data[i]["Sr No"])
+            : null;
+          const source =
+            data[i]["Source"] || data[i]["Original Source"] || "N/A";
+          const firstName = data[i]["First Name"] || "N/A";
+          const lastName = data[i]["Last Name"] || "N/A";
+          const emailId = data[i]["Email ID"] || data[i]["Email"] || "N/A";
+          const phoneNumber = data[i]["Phone Number"] || "N/A";
+          const mobilePhoneNumber = data[i]["Mobile Phone Number"] || "N/A";
+          const designation =
+            data[i]["Designation"] || data[i]["Job Title"] || "N/A";
+          const companyName =
+            data[i]["Company Name"] || data[i]["Organization"] || "N/A";
+          const country =
+            data[i]["Country"] || data[i]["Country/Region"] || "N/A";
+          const region = data[i]["Region"] || "N/A";
+          const city = data[i]["City"] || "N/A";
+          const organizationSize = !isNaN(Number(data[i]["Organization Size"]))
+            ? Number(data[i]["Organization Size"])
+            : !isNaN(Number(data[i]["Number of Employees"]))
+            ? Number(data[i]["Number of Employees"])
+            : !isNaN(Number(data[i]["Employee Size"]))
+            ? Number(data[i]["Employee Size"])
+            : null;
+          const status = data[i]["Status (Won/Lost)"] || "N/A";
+          const industry = data[i]["Industry Type"] || "N/A";
+          const dataField = data[i]["Data"] || "N/A";
+
+          // console.log("Parsed Data:", {
+          //   srNo,
+          //   source,
+          //   firstName,
+          //   lastName,
+          //   emailId,
+          //   phoneNumber,
+          //   mobilePhoneNumber,
+          //   designation,
+          //   companyName,
+          //   country,
+          //   region,
+          //   city,
+          //   organizationSize,
+          //   status,
+          //   industry,
+          //   dataField,
+          // });
+
           fileData.push({
-            source: data[i]["Source"],
-            firstName: data[i]["First Name"], // Access properties using bracket notation
-            lastName: data[i]["Last Name"],
-            emailId: data[i]["Email Id"],
-            designation: data[i]["Designation"],
-            companyName: data[i]["Company Name"],
-            industryType: data[i]["Industry Type"],
-            phoneNo: data[i]["Phone No"],
-            country: data[i]["Country"],
-            city: data[i]["City"],
-            linkedInProfile: data[i]["LinkedIn Profile"],
-            toolsUsed: data[i]["Tools Used"],
+            srNo,
+            source,
+            firstName,
+            lastName,
+            emailId,
+            phoneNumber,
+            mobilePhoneNumber,
+            designation,
+            companyName,
+            country,
+            region,
+            city,
+            organizationSize,
+            status,
+            industry,
+            data: dataField,
           });
         }
         await CsvUpload.insertMany(fileData);
       });
+
     res.send({ status: 200, success: true, msg: "Csv Imported" });
   } catch (error) {
     res.send({
@@ -38,6 +173,7 @@ exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
     });
   }
 });
+
 // exports.importNewCsvFile = CatchAsyncError(async (req, res, next) => {
 //   try {
 //     var fileData = [];

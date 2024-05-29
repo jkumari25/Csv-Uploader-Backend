@@ -1,9 +1,67 @@
+// const mongoose = require("mongoose");
+
+// const csvNewSchema = new mongoose.Schema(
+//   {
+//     source: {
+//       type: String,
+//     },
+//     firstName: {
+//       type: String,
+//     },
+//     lastName: {
+//       type: String,
+//     },
+//     designation: {
+//       type: String,
+//     },
+//     companyName: {
+//       type: String,
+//     },
+//     industryType: {
+//       type: String,
+//     },
+//     emailId: {
+//       type: String,
+//     },
+//     phoneNo: {
+//       type: String,
+//     },
+//     country: {
+//       type: String,
+//     },
+//     city: {
+//       type: String,
+//     },
+//     linkedInProfile: {
+//       type: String,
+//     },
+//     toolsUsed: {
+//       type: String,
+//     },
+//     organization: {
+//       type: String,
+//     },
+//     organizationSize: {
+//       type: Number,
+//     },
+//     Date: {
+//       type: Date,
+//       default: Date.now,
+//     },
+//   },
+//   {
+//     versionKey: false, // You should be aware of the outcome after set to false
+//   }
+// );
+
+// module.exports = mongoose.model("CsvUpload", csvNewSchema);
+
 const mongoose = require("mongoose");
 
-const csvNewSchema = new mongoose.Schema(
+const csvSchema = new mongoose.Schema(
   {
-    source: {
-      type: String,
+    srNo: {
+      type: Number,
     },
     firstName: {
       type: String,
@@ -11,41 +69,61 @@ const csvNewSchema = new mongoose.Schema(
     lastName: {
       type: String,
     },
+    emailId: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+    },
+    mobilePhoneNumber: {
+      type: String,
+    },
     designation: {
       type: String,
     },
     companyName: {
       type: String,
-    },
-    industryType: {
-      type: String,
-    },
-    emailId: {
-      type: String,
-    },
-    phoneNo: {
-      type: String,
+      alias: "organization", // This will map the "organization" field to "companyName"
     },
     country: {
+      type: String,
+    },
+    region: {
       type: String,
     },
     city: {
       type: String,
     },
-    linkedInProfile: {
+    organizationSize: {
+      type: Number,
+    },
+    status: {
       type: String,
     },
-    toolsUsed: {
+    industry: {
       type: String,
     },
-    Date: {
+    source: {
+      type: String,
+    },
+    data: {
+      type: String,
+    },
+    date: {
       type: Date,
       default: Date.now,
     },
   },
   {
     versionKey: false, // You should be aware of the outcome after set to false
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
-module.exports = mongoose.model("CsvUpload", csvNewSchema);
+// Create a virtual field to unify companyName and organization
+csvSchema.virtual("organization").get(function () {
+  return this.companyName;
+});
+
+module.exports = mongoose.model("CsvUpload", csvSchema);
